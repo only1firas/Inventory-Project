@@ -1,14 +1,12 @@
-#include "Store.h"
+// #include "Store.h"
 #include "Product.h"
-#include <cstdlib>
-#include <string>
-#include <iostream>
-#include <vector>
-#include <fstream>
-
-using namespace std;
 
 int main()
 {
+    cout << "Hello";
+    Product a1;
+    cout << a1.getCategory() << a1.getInventory() << 
+        a1.getSku() << a1.getProductName();
+
     return 0;
 }
