@@ -12,6 +12,8 @@ private:
 
 public:
     static int menu();
+    static void searchProducts();
+    static void displayProduct(Product productToDisplay);
     static void addProduct();
     static void editProduct();
     static void updateInventory();
@@ -20,6 +22,7 @@ public:
     static int checkQuantity(int sku);
     static string listCategoriesMenu();
     static Product findProductBySku(int sku);
+    static bool isInStock(Product product, int quantity);
 };
 
 #endif

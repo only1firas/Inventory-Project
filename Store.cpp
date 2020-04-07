@@ -9,6 +9,60 @@ int Store::menu()
     int choice;
 }
 
+void Store::searchProducts()
+{
+    int choice;
+    string searchTerm;
+    vector<Product> searchedProducts;
+
+    cout << endl
+         << "### Product Search ###" << endl;
+    cout << "1 to search by name " << endl;
+    cout << "2 to search by category" << endl;
+    cin >> choice;
+    cout << endl;
+
+    if (choice == 1)
+    {
+        cout << "Enter a name (no spaces, use '_'): ";
+        getline(cin, searchTerm);
+
+        for (auto product : products)
+        {
+            if (product.getProductName() == toUpperCase(searchTerm))
+            {
+                displayProduct(product);
+                break;
+            }
+        }
+    }
+
+    else if (choice == 2)
+    {
+        cout << "Choose a category: ";
+        searchTerm = listCategoriesMenu();
+
+        for (auto product : products)
+        {
+            if (product.getCategory() == searchTerm)
+            {
+                displayProduct(product);
+            }
+        }
+    }
+
+    else
+        cout << "Invalid choice" << endl;
+    
+}
+
+void Store::displayProduct(Product productToDisplay)
+{
+    cout << productToDisplay.getSku() << "\t" << productToDisplay.getProductName() << "\t"
+         << "$" << productToDisplay.getPrice() << "\t" << productToDisplay.getCategory() << "\t"
+         << productToDisplay.getInventory() << endl;
+}
+
 void Store::addProduct()
 {
     int tempSku;
@@ -22,9 +76,9 @@ void Store::addProduct()
     cout << "### Adding a product ###";
     cout << "Enter product sku: ";
     cin >> tempSku;
-    cin.ignore(1,'\n'); // Otherwise will skip getline
+    cin.ignore(1, '\n'); // Otherwise will skip getline
     cout << "Enter product name (No Spaces, use '_'): ";
-    
+
     //
     // trying to use getline
     //
@@ -60,7 +114,7 @@ void Store::editProduct()
 
     Product temp = Store::findProductBySku(tempSku);
 
-    cout << "WHat to do with " << temp.getProductName() << "? ("
+    cout << "What to do with " << temp.getProductName() << "? ("
          << temp.getInventory() << " @ $" << temp.getPrice() << ") \n";
     cout << "Enter choice: \n";
     cout << "1 to change price" << endl;
@@ -138,14 +192,56 @@ void Store::readInventory()
         }
         inventoryFile.close();
     }
+
     else
     {
-        cout << "Can't open file";
+        cout << "No inventory file, one will be created";
+        updateInventory();
     }
 }
 
 void Store::checkout()
 {
+    int tempSku, tempQuantity;
+    double total = 0;
+    Product temp;
+    vector<string> cartProducts;
+    vector<int> cartQuantity;
+
+    cout << endl << "### Checkout ###" << endl;
+
+    while (true)
+    {
+        cout << "Enter SKU (or 0 to exit): ";
+        cin >> tempSku;
+
+        if (tempSku == 0)
+            break;
+
+        temp = findProductBySku(tempSku);
+
+        cartProducts.push_back(temp.getProductName());
+
+        cout << "Enter quantity: ";
+        cin >> tempQuantity;
+
+        cartQuantity.push_back(tempQuantity);
+
+        if (tempQuantity > 0)
+        {
+            if (isInStock(temp, tempQuantity))
+            {
+                total += (temp.getPrice() * tempQuantity);
+            }
+        }
+
+        else
+        {
+            cout << "Invalid Quantity" << endl;
+        }
+        
+    }
+    
 }
 
 int Store::checkQuantity(int sku)
@@ -187,4 +283,12 @@ Product Store::findProductBySku(int sku)
         if (x.getSku() == sku)
             return x;
     }
+}
+
+bool Store::isInStock(Product product, int quantity)
+{
+    if (product.getInventory() < quantity)
+        return false;
+
+    return true;
 }
