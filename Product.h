@@ -25,6 +25,7 @@ public:
     string getProductName();
     string getCategory();
     double getPrice();
+    void updatePrice(double newPrice);
     int getInventory();
     int updateInventory(int x);
     string static toUpperCase(string original);

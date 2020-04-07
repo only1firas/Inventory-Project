@@ -3,8 +3,8 @@
 
 int main()
 {
-    Store s1;
-    s1.readInventory();
+    Store::addProduct();
+    Store::updateInventory();
 
     return 0;
 }

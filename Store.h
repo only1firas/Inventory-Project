@@ -13,11 +13,13 @@ private:
 public:
     static int menu();
     static void addProduct();
+    static void editProduct();
     static void updateInventory();
     static void readInventory();
     static void checkout();
-    static void checkQuantity(int sku);
+    static int checkQuantity(int sku);
     static string listCategoriesMenu();
+    static Product findProductBySku(int sku);
 };
 
 #endif
