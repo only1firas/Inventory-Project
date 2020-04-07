@@ -12,6 +12,8 @@ Product::Product()
 Product::Product(int sku, string productName, string category,
                  double price, int inventory)
 {
+    this->sku = sku;
+    this->productName = toUpperCase(productName);
 }
 
 int Product::getSku() { return sku; }
@@ -33,10 +35,15 @@ string Product::toUpperCase(string input)
 
     for (int i = 0; i < output.length(); i++)
     {
+        // Changes letters to upper case using ASCII
         c = output[i];
-        if (c <= 'Z' && c >= 'A')
-            output[i] = (c - ('Z' - 'z'));
+        if (c <= 'z' && c >= 'a')
+            output[i] = (c - ('z' - 'Z'));
+        
+        // In case a space is entered
+        if (output[i] == ' ')
+            output[i] = '_';
     }
-    
+
     return output;
 }

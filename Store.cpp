@@ -20,8 +20,7 @@ void Store::addProduct()
     cout << "Enter product name (No Spaces, use '_'): ";
     cin >> tempProductName;
     cout << "Enter a product category: \n";
-    listCategories();
-    cin >> tempCategory;
+    tempCategory = listCategoriesMenu();
     cout << "Enter Price: ";
     cin >> tempPrice;
     cout << "Enter quantity: ";
@@ -92,10 +91,21 @@ void Store::checkQuantity(int sku)
 {
 }
 
-void Store::listCategories()
+string Store::listCategoriesMenu()
 {
-    for (int i = 1; i <= categories.size(); i++)
+    while (true)
     {
-        cout << i << " for " << categories[i - 1] << endl;
+        int choice;
+        for (int i = 1; i <= categories.size(); i++)
+        {
+            cout << i << " for " << categories[i - 1] << endl;
+        }
+
+        cin >> choice;
+
+        if (choice < 1 || choice > categories.size())
+            cout << "Invalid choice \n";
+        else
+            return categories[choice - 1];
     }
 }

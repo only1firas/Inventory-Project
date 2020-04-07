@@ -17,7 +17,7 @@ public:
     static void readInventory();
     static void checkout();
     static void checkQuantity(int sku);
-    static void listCategories();
+    static string listCategoriesMenu();
 };
 
 #endif
