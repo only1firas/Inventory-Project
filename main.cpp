@@ -1,12 +1,10 @@
 // #include "Store.h"
-#include "Product.h"
+#include "Store.h"
 
 int main()
 {
-    cout << "Hello";
-    Product a1;
-    cout << a1.getCategory() << a1.getInventory() << 
-        a1.getSku() << a1.getProductName();
+    Store s1;
+    s1.readInventory();
 
     return 0;
 }
