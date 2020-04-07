@@ -27,6 +27,7 @@ public:
     double getPrice();
     int getInventory();
     int updateInventory(int x);
+    string static toUpperCase(string original);
 };
 
 #endif

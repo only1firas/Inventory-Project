@@ -9,6 +9,3 @@ Product.o: Product.cpp
 
 Store.o: Store.cpp
 	g++ -c Store.cpp
-
-clean:
-	rm *.o inventory

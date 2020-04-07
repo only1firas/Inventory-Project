@@ -17,7 +17,7 @@ void Store::addProduct()
 
     cout << "Enter product sku: ";
     cin >> tempSku;
-    cout << "Enter product name (No Spaces): ";
+    cout << "Enter product name (No Spaces, use '_'): ";
     cin >> tempProductName;
     cout << "Enter a product category: \n";
     listCategories();
@@ -28,8 +28,8 @@ void Store::addProduct()
     cin >> tempInventory;
 
     Product temp(tempSku, tempProductName, tempCategory,
-                tempPrice, tempInventory);
-    
+                 tempPrice, tempInventory);
+
     products.push_back(temp);
 }
 
