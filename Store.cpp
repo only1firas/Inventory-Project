@@ -19,10 +19,17 @@ void Store::addProduct()
     char choice;
 
     cout << endl;
+    cout << "### Adding a product ###";
     cout << "Enter product sku: ";
     cin >> tempSku;
+    cin.ignore(1,'\n'); // Otherwise will skip getline
     cout << "Enter product name (No Spaces, use '_'): ";
+    
+    //
+    // trying to use getline
+    //
     getline(cin, tempProductName);
+    //
     cout << "Enter a product category: \n";
     tempCategory = listCategoriesMenu();
     cout << "Enter Price: ";
@@ -41,11 +48,12 @@ void Store::addProduct()
         addProduct();
 }
 
-void editProduct()
+void Store::editProduct()
 {
     int tempSku;
     int choice;
     cout << endl;
+    cout << "### Editing Product ###" << endl;
     cout << "Enter SKU: ";
     cin >> tempSku;
     cout << endl;
@@ -65,14 +73,16 @@ void editProduct()
         cout << "Enter new price: ";
         cin >> newPrice;
         temp.updatePrice(newPrice);
+        updateInventory();
     }
 
-    else if (choice)
+    else if (choice == 2)
     {
         int newQuantity;
         cout << "Enter new quantity: ";
         cin >> newQuantity;
         temp.updateInventory(newQuantity);
+        updateInventory();
     }
 
     else
@@ -83,7 +93,7 @@ void editProduct()
 
 void Store::updateInventory()
 {
-    ofstream inventoryFile("inventory.txt");
+    ofstream inventoryFile("inventory.txt", ios::trunc);
 
     if (inventoryFile.is_open())
     {
@@ -94,6 +104,8 @@ void Store::updateInventory()
                           << "\t" << products[i].getInventory() << endl;
         }
         inventoryFile.close();
+
+        cout << endl << "*** Inventory Updated ***" << endl;
     }
     else
     {
@@ -154,6 +166,7 @@ string Store::listCategoriesMenu()
             cout << i << " for " << categories[i - 1] << endl;
         }
         validChoice = true;
+
         cin >> choice;
 
         if (choice < 1 || choice > categories.size())
