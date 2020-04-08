@@ -2,6 +2,7 @@
 #define PRODUCT_H
 
 #include <string>
+#include <sstream>
 #include <cstdlib>
 #include <iostream>
 #include <vector>

@@ -1,12 +1,63 @@
 #include "Store.h"
 
 vector<Product> Store::products;
-vector<string> Store::categories = {"TV", "AUDIO", "GAMING", "COMPUTERS"};
+vector<string> Store::categories = {"TV", "AUDIO", "GAMING", "COMPUTERS", "MOBILE"};
 int Store::amountOfProducts = products.size();
+double Store::TAX = 0.12;
 
-int Store::menu()
+bool Store::menu()
 {
     int choice;
+
+    cout << "\n#### MAIN MENU ####\n"
+         << endl;
+    cout << "Select an option:" << endl;
+    cout << "1) Search Products" << endl;
+    cout << "2) Checkout" << endl;
+    cout << "3) Add product" << endl;
+    cout << "4) Edit product" << endl;
+    cout << "5) Change tax rate (Currently: " << (TAX * 100) << "%)" << endl;
+    cout << "6) Exit Program" << endl;
+    cin >> choice;
+
+    switch (choice)
+    {
+    case 1:
+        searchProducts();
+        break;
+
+    case 2:
+        checkout();
+        break;
+
+    case 3:
+        addProduct();
+        break;
+
+    case 4:
+        editProduct();
+        break;
+
+    case 5:
+        changeTax();
+        break;
+
+    case 6:
+        return true;
+
+    default:
+        break;
+    }
+    return false;
+}
+
+void Store::changeTax()
+{
+    cout << endl
+         << "Current tax rate: " << (TAX * 100) << "%" << endl
+         << "New tax rate? (e.g 15): ";
+    cin >> TAX;
+    TAX = TAX / 100;
 }
 
 void Store::searchProducts()
@@ -17,17 +68,18 @@ void Store::searchProducts()
 
     cout << endl
          << "### Product Search ###" << endl;
-    cout << "1 to search by name " << endl;
-    cout << "2 to search by category" << endl;
+    cout << "1) to search by name " << endl;
+    cout << "2) to search by category" << endl;
     cin >> choice;
     cout << endl;
 
     if (choice == 1)
     {
         cout << "Enter a name (no spaces, use '_'): ";
-        getline(cin, searchTerm);
+        cin >> searchTerm;
+        cout << endl;
 
-        for (auto product : products)
+        for (auto &product : products)
         {
             if (product.getProductName() == toUpperCase(searchTerm))
             {
@@ -42,7 +94,7 @@ void Store::searchProducts()
         cout << "Choose a category: ";
         searchTerm = listCategoriesMenu();
 
-        for (auto product : products)
+        for (auto &product : products)
         {
             if (product.getCategory() == searchTerm)
             {
@@ -53,14 +105,13 @@ void Store::searchProducts()
 
     else
         cout << "Invalid choice" << endl;
-    
 }
 
-void Store::displayProduct(Product productToDisplay)
+void Store::displayProduct(Product &productToDisplay)
 {
-    cout << productToDisplay.getSku() << "\t" << productToDisplay.getProductName() << "\t"
-         << "$" << productToDisplay.getPrice() << "\t" << productToDisplay.getCategory() << "\t"
-         << productToDisplay.getInventory() << endl;
+    cout << productToDisplay.getSku() << "\t" << productToDisplay.getProductName()
+         << "\n$" << productToDisplay.getPrice() << "\t" << productToDisplay.getCategory() << "\t"
+         << productToDisplay.getInventory() << " Units" << endl;
 }
 
 void Store::addProduct()
@@ -70,20 +121,15 @@ void Store::addProduct()
     string tempCategory;
     double tempPrice;
     int tempInventory;
-    char choice;
+    string choice;
 
     cout << endl;
-    cout << "### Adding a product ###";
+    cout << "### Adding a product ###" << endl;
     cout << "Enter product sku: ";
     cin >> tempSku;
     cin.ignore(1, '\n'); // Otherwise will skip getline
-    cout << "Enter product name (No Spaces, use '_'): ";
-
-    //
-    // trying to use getline
-    //
+    cout << "Enter product name: ";
     getline(cin, tempProductName);
-    //
     cout << "Enter a product category: \n";
     tempCategory = listCategoriesMenu();
     cout << "Enter Price: ";
@@ -98,7 +144,8 @@ void Store::addProduct()
 
     cout << "Add another? (Y/N): ";
     cin >> choice;
-    if (choice == 'Y')
+    choice = toUpperCase(choice);
+    if (choice == "Y")
         addProduct();
 }
 
@@ -111,8 +158,15 @@ void Store::editProduct()
     cout << "Enter SKU: ";
     cin >> tempSku;
     cout << endl;
+    Product temp;
 
-    Product temp = Store::findProductBySku(tempSku);
+    //Product temp = Store::findProductBySku(tempSku);
+
+    for (auto &x : products)
+    {
+        if (x.getSku() == tempSku)
+            temp = x;
+    }
 
     cout << "What to do with " << temp.getProductName() << "? ("
          << temp.getInventory() << " @ $" << temp.getPrice() << ") \n";
@@ -159,7 +213,8 @@ void Store::updateInventory()
         }
         inventoryFile.close();
 
-        cout << endl << "*** Inventory Updated ***" << endl;
+        cout << endl
+             << "*** Inventory Updated ***" << endl;
     }
     else
     {
@@ -169,33 +224,37 @@ void Store::updateInventory()
 
 void Store::readInventory()
 {
+    bool alreadyFile = false;
     int tempSku;
     string tempProductName;
     string tempCategory;
     double tempPrice;
     int tempInventory;
-    int counter = 0;
 
     ifstream inventoryFile("inventory.txt");
 
     if (inventoryFile.is_open())
     {
-        while (inventoryFile.good())
+        cout << "Past if";
+        while (!inventoryFile.eof())
         {
+            cout << "passed while";
             inventoryFile >> tempSku >> tempProductName >> tempCategory >> tempPrice >> tempInventory;
 
             Product temp(tempSku, tempProductName, tempCategory, tempPrice,
                          tempInventory);
 
-            products[counter] = temp;
-            counter++;
+            products.push_back(temp);
         }
+        cout << "finished loop";
         inventoryFile.close();
+        cout << "file closed";
+        alreadyFile = true;
     }
 
-    else
+    if (!alreadyFile)
     {
-        cout << "No inventory file, one will be created";
+        cout << "\nNo inventory file, one will be created";
         updateInventory();
     }
 }
@@ -208,11 +267,13 @@ void Store::checkout()
     vector<string> cartProducts;
     vector<int> cartQuantity;
 
-    cout << endl << "### Checkout ###" << endl;
+    cout << endl
+         << "### Checkout ###" << endl;
 
     while (true)
     {
-        cout << "Enter SKU (or 0 to exit): ";
+        cout << endl
+             << "Enter SKU (or 0 to exit): ";
         cin >> tempSku;
 
         if (tempSku == 0)
@@ -232,16 +293,34 @@ void Store::checkout()
             if (isInStock(temp, tempQuantity))
             {
                 total += (temp.getPrice() * tempQuantity);
+                temp.updateInventory(temp.getInventory() - tempQuantity);
             }
+        }
+
+        else if (!isInStock(temp, tempQuantity))
+        {
+            cout << "Out of stock!";
         }
 
         else
         {
             cout << "Invalid Quantity" << endl;
         }
-        
     }
-    
+
+    cout << "\n******************************"
+         << "\nCart:" << endl;
+    for (int i = 0; i < cartProducts.size(); i++)
+    {
+        cout << endl
+             << cartQuantity[i] << " x " << cartProducts[i] << endl;
+    }
+    printf("SubTotal: $%.2lf", total);
+    printf("Tax: $%.2lf", (total * TAX));
+    printf("Total: $%.2lf", (total + (total * TAX)));
+    int choice;
+    cout << "\nEnter 0 to go back to main menu: ";
+    cin >> choice;
 }
 
 int Store::checkQuantity(int sku)
@@ -265,6 +344,8 @@ string Store::listCategoriesMenu()
 
         cin >> choice;
 
+        cout << endl;
+
         if (choice < 1 || choice > categories.size())
         {
             cout << "Invalid choice \n";
@@ -275,10 +356,10 @@ string Store::listCategoriesMenu()
     }
 }
 
-Product Store::findProductBySku(int sku)
+Product &Store::findProductBySku(int sku)
 {
     // Goes through each product in array to find matching sku
-    for (auto x : products)
+    for (auto &x : products)
     {
         if (x.getSku() == sku)
             return x;
