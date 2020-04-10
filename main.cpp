@@ -17,6 +17,7 @@ int main()
     }
 
     Store::updateInventory();
+    Store::clearProducts();
 
     cout << endl << "#### End of Program ####";
 

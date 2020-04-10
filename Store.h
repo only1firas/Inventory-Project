@@ -10,9 +10,11 @@ private:
     static int amountOfProducts;
     static vector<string> categories;
     static double TAX;
+    static int DISCOUNT;
 
 public:
     static bool menu();
+    static void clearProducts();
     static void changeTax();
     static void searchProducts();
     static void displayProduct(Product &productToDisplay);
@@ -23,7 +25,7 @@ public:
     static void checkout();
     static int checkQuantity(int sku);
     static string listCategoriesMenu();
-    static Product &findProductBySku(int sku);
+    static int findProductIndexBySku(int sku);
     static bool isInStock(Product product, int quantity);
 };
 
